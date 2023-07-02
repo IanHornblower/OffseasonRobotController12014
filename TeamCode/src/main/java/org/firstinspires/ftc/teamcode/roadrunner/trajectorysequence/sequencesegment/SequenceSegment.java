@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class SequenceSegment {
     private final double duration;
-    private final Pose2d startPose;
+    private Pose2d startPose;
     private final Pose2d endPose;
     private final List<TrajectoryMarker> markers;
 
@@ -28,6 +28,10 @@ public abstract class SequenceSegment {
 
     public Pose2d getStartPose() {
         return startPose;
+    }
+
+    public void setStartPose(Pose2d startPose) {
+        this.startPose = startPose;
     }
 
     public Pose2d getEndPose() {

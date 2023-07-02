@@ -1,8 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.FSM;
-
-import com.sun.tools.javac.code.Attribute;
-
-import org.firstinspires.ftc.teamcode.hardware.actions.FollowTrajectorySequence;
+package org.firstinspires.ftc.teamcode.FSM;
 
 import java.util.ArrayList;
 
@@ -10,6 +6,13 @@ public class CreateSwitchTree {
     public static ArrayList<String> FSM_STATE = new ArrayList<>();
 
     public static void main(String... args) {
+
+        addState("IDLE");
+        addState("STARTING");
+        addState("DROPPING_LIFT");
+        addState("GRAB_CONE");
+        addState("LIFT_ARTICULATE");
+        addState("END");
 
         System.out.println(getSwitchTree());
     }

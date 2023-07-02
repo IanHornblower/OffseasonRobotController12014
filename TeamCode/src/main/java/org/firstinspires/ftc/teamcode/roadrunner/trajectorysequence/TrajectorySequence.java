@@ -20,6 +20,10 @@ public class TrajectorySequence {
         return sequenceList.get(0).getStartPose();
     }
 
+    public void setStart(Pose2d start) {
+        sequenceList.get(0).setStartPose(start);
+    }
+
     public Pose2d end() {
         return sequenceList.get(sequenceList.size() - 1).getEndPose();
     }

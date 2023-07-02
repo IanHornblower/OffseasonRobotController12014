@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.FSM;
+package org.firstinspires.ftc.teamcode.FSM;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

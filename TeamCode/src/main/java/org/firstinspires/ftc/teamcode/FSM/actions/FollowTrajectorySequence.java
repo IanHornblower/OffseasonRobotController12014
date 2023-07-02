@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.teamcode.hardware.actions;
+package org.firstinspires.ftc.teamcode.FSM.actions;
 
+import org.firstinspires.ftc.teamcode.FSM.FiniteStateMachine;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.util.FSM.FiniteStateMachine;
 
 public class FollowTrajectorySequence extends FiniteStateMachine {
 
     private final Robot robot;
-    private final TrajectorySequence trajectorySequence;
+    private TrajectorySequence trajectorySequence;
     private final double endOffset;
 
     public FollowTrajectorySequence(Robot robot, TrajectorySequence trajectorySequence) {
@@ -32,22 +33,29 @@ public class FollowTrajectorySequence extends FiniteStateMachine {
         addState("END");
     }
 
+    public void updateTrajectorySequence(TrajectorySequence trajectorySequence) {
+        this.trajectorySequence = trajectorySequence;
+    }
+
     @Override
     public void update() {
         switch(getState()) {
             case "IDLE":
                 break;
             case "STARTING":
-                robot.drive.followTrajectorySequenceAsync(trajectorySequence);
-                nextState();
+                robot.drive.followTrajectorySequence(trajectorySequence);
+                stateTimer.reset();
+
+                setState("RUNNING");
                 break;
             case "RUNNING":
                 robot.drive.update();
+
                 nextState(trajectorySequence.duration() + endOffset > stateTimer.seconds());
                 break;
             case "END":
                 robot.drive.stop();
-                nextState();
+                reset();
                 break;
         }
     }
