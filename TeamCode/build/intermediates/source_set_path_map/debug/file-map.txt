@@ -1,0 +1,28 @@
+org.firstinspires.ftc.teamcode.TeamCode-jetified-dashboard-0.4.9-0 C:\Users\ianmh\.gradle\caches\transforms-3\017ea887f54b5feb9dcfe1e750990ab6\transformed\jetified-dashboard-0.4.9\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-appcompat-resources-1.2.0-1 C:\Users\ianmh\.gradle\caches\transforms-3\28f985326b21b54295ca965240d7695e\transformed\jetified-appcompat-resources-1.2.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-core-ktx-1.6.0-2 C:\Users\ianmh\.gradle\caches\transforms-3\2c2ec870ecd1999378efd1bffa1abd14\transformed\jetified-core-ktx-1.6.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-OnBotJava-8.1.1-3 C:\Users\ianmh\.gradle\caches\transforms-3\312960cbbf40a1316a5973744bcb2cb4\transformed\jetified-OnBotJava-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-zxing-android-embedded-4.3.0-4 C:\Users\ianmh\.gradle\caches\transforms-3\560707d22f97225a20e197437633211e\transformed\jetified-zxing-android-embedded-4.3.0\res
+org.firstinspires.ftc.teamcode.TeamCode-core-1.6.0-5 C:\Users\ianmh\.gradle\caches\transforms-3\5a26a77a42529a108707080137eb1ab1\transformed\core-1.6.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-opencv-repackaged-4.5.3-B-6 C:\Users\ianmh\.gradle\caches\transforms-3\5bbed9d7302caef1f2ef9244571f0877\transformed\jetified-opencv-repackaged-4.5.3-B\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-Inspection-8.1.1-7 C:\Users\ianmh\.gradle\caches\transforms-3\5db0741486ea821402e8df9d620f229c\transformed\jetified-Inspection-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-Hardware-8.1.1-8 C:\Users\ianmh\.gradle\caches\transforms-3\652855597b9fcc7bda8c9ce7898535c0\transformed\jetified-Hardware-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-RobotCore-8.1.1-9 C:\Users\ianmh\.gradle\caches\transforms-3\71a1a8fd91a01b5484d56bbab3b56558\transformed\jetified-RobotCore-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-FtcCommon-8.1.1-10 C:\Users\ianmh\.gradle\caches\transforms-3\7ea0fa925350317ff0cff57e7f58e233\transformed\jetified-FtcCommon-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-RobotServer-8.1.1-11 C:\Users\ianmh\.gradle\caches\transforms-3\80479247ebc21b52db92532649d6d745\transformed\jetified-RobotServer-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-Blocks-8.1.1-12 C:\Users\ianmh\.gradle\caches\transforms-3\a1f7c6154519d5e3e619526e76b1e22e\transformed\jetified-Blocks-8.1.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-annotation-experimental-1.1.0-13 C:\Users\ianmh\.gradle\caches\transforms-3\b2668d2ae47c8d05fe1d46b48e555597\transformed\jetified-annotation-experimental-1.1.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-apriltag-1.1.0-14 C:\Users\ianmh\.gradle\caches\transforms-3\ce6a0b34da136a58996eb40b38cca4af\transformed\jetified-apriltag-1.1.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-homeostasis-FTC-1.0.8-15 C:\Users\ianmh\.gradle\caches\transforms-3\d084de2408a73f70c3222bc1d7a8bc0f\transformed\jetified-homeostasis-FTC-1.0.8\res
+org.firstinspires.ftc.teamcode.TeamCode-appcompat-1.2.0-16 C:\Users\ianmh\.gradle\caches\transforms-3\d714b20eb7c65f0b59fc2f2daab24823\transformed\appcompat-1.2.0\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-core-2.0.1-17 C:\Users\ianmh\.gradle\caches\transforms-3\f2c0ebb68d5d8c0ccb67bfccc258e2d9\transformed\jetified-core-2.0.1\res
+org.firstinspires.ftc.teamcode.TeamCode-jetified-easyopencv-1.5.2-18 C:\Users\ianmh\.gradle\caches\transforms-3\fe7d1d112ae108c6650a45cd0444df8f\transformed\jetified-easyopencv-1.5.2\res
+org.firstinspires.ftc.teamcode.TeamCode-packaged_res-19 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\FtcRobotController\build\intermediates\packaged_res\debug
+org.firstinspires.ftc.teamcode.TeamCode-pngs-20 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\generated\res\pngs\debug
+org.firstinspires.ftc.teamcode.TeamCode-resValues-21 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\generated\res\resValues\debug
+org.firstinspires.ftc.teamcode.TeamCode-rs-22 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\generated\res\rs\debug
+org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-23 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-24 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+org.firstinspires.ftc.teamcode.TeamCode-merged_res-25 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\build\intermediates\merged_res\debug
+org.firstinspires.ftc.teamcode.TeamCode-debug-26 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\src\debug\res
+org.firstinspires.ftc.teamcode.TeamCode-main-27 C:\Users\ianmh\OneDrive\Documents\FTC\Powerplay Offseason\OffseasonRobotController.RR0.5.6-FTCLIB\TeamCode\src\main\res
