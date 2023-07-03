@@ -18,8 +18,6 @@ import org.firstinspires.ftc.teamcode.hardware.subsystems.SensorArmy;
 public class LeftHighAutoRefined extends LinearOpMode {
     @Override
     public void runOpMode() {
-
-
         MultipleTelemetry m_telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
 
         Robot robot = new Robot(hardwareMap, telemetry);
@@ -27,6 +25,8 @@ public class LeftHighAutoRefined extends LinearOpMode {
         Paths.setDrive(robot.drive);
 
         robot.drive.setPoseEstimate(Paths.NormalHigh.Left.start);
+
+        robot.drive.startIMUThread(this);
 
         int cycle = 1;
         boolean parked = false;

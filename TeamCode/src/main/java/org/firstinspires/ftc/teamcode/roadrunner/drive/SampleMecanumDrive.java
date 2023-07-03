@@ -17,8 +17,10 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -30,6 +32,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.hardware.Globals;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -50,6 +53,8 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.enc
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+
+import javax.annotation.concurrent.GuardedBy;
 
 
 /*
@@ -82,7 +87,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
+    private final Object imuLock = new Object();
+    @GuardedBy("imuLock")
     private IMU imu;
+    private Thread imuThread;
+    private double imuVelocity = 0;
+    private double imuAngle = 0;
+    private double imuOffset = 0;
     private VoltageSensor batteryVoltageSensor;
 
     private List<Integer> lastEncPositions = new ArrayList<>();
@@ -165,6 +176,33 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRetraction.setPosition(leftReleax);
         rightRetraction.setPosition(rightReleax);
         perpRetraction.setPosition(perptReleax);
+    }
+
+
+    public void resetIMU() {
+        imuOffset = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    public double getAngle() {
+        return imuAngle - imuOffset;
+    }
+
+    public double getAngleVelcity() {
+        return imuVelocity;
+    }
+
+    public void startIMUThread(LinearOpMode opMode) {
+        if (Globals.USING_IMU) {
+            imuThread = new Thread(() -> {
+                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                    synchronized (imuLock) {
+                        imuAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                        imuVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+                    }
+                }
+            });
+            imuThread.start();
+        }
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -325,13 +363,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+       // return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         //return 0.0;
+        return imuAngle;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        return imuVelocity;
         //return 0.0;
     }
 
