@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 
 import com.outoftheboxrobotics.photoncore.Neutrino.RevColorSensor.RevColorSensorV3Ex;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -51,6 +52,15 @@ public class Faga implements Subsystem {
     public double manPower = 0.0;
     public boolean auto = true;
 
+    public static enum STATE {
+        ACTIVE,
+        MANUEL,
+        DISABLE,
+        RESTING
+    }
+
+    STATE state = STATE.ACTIVE;
+
     double desiredFourbarPosition = 0;
     PIDController fourbarController = new PIDController(RobotConstants.Faga.Fourbar.kP, RobotConstants.Faga.Fourbar.kI, RobotConstants.Faga.Fourbar.kD);
 
@@ -76,16 +86,54 @@ public class Faga implements Subsystem {
         //claw = hardwareMap.get(Servo.class, "claw");
     }
 
+    private double prevManPower = 0.0;
+
     @Override
     public void periodic() {
-        updateFourbar();
+        switch (state) {
+            case ACTIVE:
+                updateFourbar();
+                break;
+            case MANUEL:
+                if(manPower != prevManPower) {
+                    fourbar.setPower(manPower);
+                    prevManPower = manPower;
+                }
+                break;
+            case DISABLE:
+                fourbar.setPower(0.0);
+                state = STATE.RESTING;
+                break;
+            case RESTING:
+                // do literally nothing
+                break;
+        }
+
+
+    }
+
+    public void activate() {
+        state = STATE.ACTIVE;
+    }
+
+    public void disable() {
+        state = STATE.DISABLE;
+    }
+
+    public void manual() {
+        state = STATE.MANUEL;
+    }
+
+    public void DEPRICATED_SET_TO_REST() {
+        state = STATE.RESTING;
     }
 
     public double mp_target;
-
     public void updateFourbar() {
+        double encPosition = fourbar.getCurrentPosition();
+        double ff = (sine(calc(encPosition)) * -kCos);
 
-        double ff = (sine(calc(fourbar.getCurrentPosition())) * -kCos);
+        //PhotonCore.EXPANSION_HUB.getBulkData().getMotorCurrentPosition(fourbar.getPortNumber());
 
         if(auto) {
 
@@ -102,7 +150,7 @@ public class Faga implements Subsystem {
 
             targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
             mp_target = targetState.getX();
-            double pid = fourbarController.calculate(fourbar.getCurrentPosition(), mp_target);
+            double pid = fourbarController.calculate(encPosition, mp_target);
             double fvfa = (kV * targetState.getV()) + (kA * targetState.getA());
 
             double output = (pid + ff + fvfa) / voltage * 12.0;
@@ -238,7 +286,7 @@ public class Faga implements Subsystem {
 
     }
 
-    //Bhaskara I's sine approximation
+    //Bhaskara I's sine approximation  // goob
     private double sine(double radians) {
         double pi = Math.PI;
         double tau = pi * 2;
