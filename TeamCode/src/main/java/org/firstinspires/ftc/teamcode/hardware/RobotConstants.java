@@ -69,6 +69,15 @@ public class RobotConstants {
 
     @Config
     public static class Lift {
+        public static double Kg = 0.065; // Tune
 
+        public static double tolerance = 15;
+        public static double downSpeed = -0.42; // -0.35
+
+        public static double intake = 80;
+        public static double low_frontload = 120;
+        public static double smallPole = 210; // was 150
+        public static double middlePole = 475;
+        public static double highPole = 930;
     }
 }

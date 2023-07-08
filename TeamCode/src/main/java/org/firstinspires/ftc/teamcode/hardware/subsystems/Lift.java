@@ -1,37 +1,33 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
+import static org.firstinspires.ftc.teamcode.hardware.RobotConstants.Lift.*;
+
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.hardware.interfaces.Subsystem;
+public class Lift {
 
-@Config
-public class Lift implements Subsystem {
+    private DcMotorEx lower;
+    private DcMotorEx middle;
+    private DcMotorEx upper;
 
-    DcMotorEx lower;
-    DcMotorEx middle;
-    DcMotorEx upper;
-
-    //TODO: finish subsystem and motor config
-    public static double Kg = 0.09; // Was 0.07
-
-    public double position = 0;
-    public static double smallPole = 210; // was 150
-    public static double middlePole = 475;
-    public static double highPole = 930;
-    public static double highPoleBroken = 1220;
-
-    public double error;
+    private double error;
+    private final int encPort;
+    private double target = 0;
+    private double liftState = 0;
+    private double power;
+    private double manuelPower = 0.0;
 
     public enum LIFT {
         RETURN(0),
+        INTAKE(intake),
+        LOW_FRONTLOAD(low_frontload),
         LOW(smallPole),
         MID(middlePole),
-        HIGH(highPole),
-        SUPERHIGH(highPoleBroken);
+        HIGH(highPole);
 
         double ticks;
 
@@ -44,15 +40,14 @@ public class Lift implements Subsystem {
         }
     }
 
-    public boolean manual = false;
-
-    public void setModeManuel() {
-        manual = true;
+    public enum STATE {
+        MANUEL,
+        RUNNING,
+        STOP,
+        IDLE,
     }
 
-    public void setModeAutomatic() {
-        manual = false;
-    }
+    private STATE state = STATE.IDLE;
 
     public Lift(HardwareMap hardwareMap) {
         lower = hardwareMap.get(DcMotorEx.class, "lower");
@@ -70,35 +65,13 @@ public class Lift implements Subsystem {
         upper.setDirection(DcMotorSimple.Direction.REVERSE);
         lower.setDirection(DcMotorSimple.Direction.REVERSE);
         middle.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
 
-    double tolerance = 30;
-    public static double downSpeed = -0.5  ; // -0.35
-
-    public void runToPosition(double position) {
-        error = position - getEncoderPosition();
-        if(error < 0 && Math.abs(error) > tolerance) {
-            setPower(downSpeed + manPower);
-        }
-        else if(error > 0 && error < 200 && Math.abs(error) > tolerance) {
-            setPower(0.7 + manPower);
-        }
-        else if(error > 0 && Math.abs(error) > tolerance) {
-            setPower(1 + manPower);
-        }
-        else {
-            setPower(Kg + manPower);
-        }
-
+        encPort = lower.getPortNumber();
     }
 
     double previousPower = 0.0;
-
     public void setPower(double power) {
-        if(previousPower == power) {
-            //pass
-        }
-        else {
+        if(previousPower != power) {
             lower.setPower(power);
             middle.setPower(power);
             upper.setPower(power);
@@ -106,38 +79,77 @@ public class Lift implements Subsystem {
         }
     }
 
-    public double getPosition() {
-        return position;
+    public double getTarget() {
+        return target;
     }
 
-    public double getEncoderPosition() {
-        return lower.getCurrentPosition();
+    public void setManuelPower(double manuelPower) {
+        this.manuelPower = manuelPower;
     }
 
-    public void setPosition(double position) {
-        this.position = position;
+    public double getState() {
+        return liftState;
     }
 
-    double manPower = 0.0;
-    public void setManuealPower(double power) {
-        manPower = power;
+    public double getError() {
+        return error;
     }
 
-    public boolean isLiftDown() {
-        //return !limitSwitch.getState();
-        return Math.abs(getEncoderPosition()) < 30;
+    public boolean atTarget() {
+        return Math.abs(error) < tolerance;
     }
 
-    @Override
-    public void periodic() {
-        if(!manual) {
-            runToPosition(position);
+    public void setTarget(double target) {
+        state = STATE.RUNNING;
+        this.target = target;
+    }
+
+    public void setTarget(LIFT target) {
+        state = STATE.RUNNING;
+        this.target = target.getTicks();
+    }
+
+    public void stop() {
+        state = STATE.STOP;
+    }
+
+    public void updateLift() {
+        if(error < 0 && !atTarget()) {
+            power = downSpeed;
+        }
+        else if(error > 0 && error < 200 && !atTarget()) {
+            power = 0.7;
+        }
+        else if(error > 0 && !atTarget()) {
+            power = 1;
         }
         else {
-            setPower(manPower);
+            power = Kg;
+            state = STATE.STOP;
         }
     }
 
+    public void loop(LynxModule.BulkData data) {
+        liftState = data.getMotorCurrentPosition(encPort);
+        error = target - liftState;
 
+        if(Math.abs(manuelPower) > 0.01) state = STATE.MANUEL;
 
+        switch (state) {
+            case MANUEL:
+                setPower(manuelPower + Kg);
+                if(manuelPower == 0.0) state = STATE.STOP;
+                break;
+            case RUNNING:
+                updateLift();
+                setPower(power);
+                break;
+            case STOP:
+                setPower(Kg);
+                state = STATE.IDLE;
+            case IDLE:
+                // do nothing
+                break;
+        }
+    }
 }

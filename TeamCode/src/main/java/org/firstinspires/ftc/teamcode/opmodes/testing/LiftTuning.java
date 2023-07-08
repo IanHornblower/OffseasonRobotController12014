@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -27,22 +28,32 @@ public class LiftTuning extends TeleOpMode {
     @Override
     public void initOpMode() {
         lift = new Lift(getHardwareMap());
-        if(automatic) lift.setModeAutomatic();
-        else lift.setModeManuel();
+        //if(automatic) lift.setModeAutomatic();
+        //else lift.setModeManuel();
 
     }
 
+    double previous = 0;
+
     @Override
     public void updateOpMode() {
-        if(automatic) lift.setModeAutomatic();
-        else lift.setModeManuel();
+        if(!automatic) liftPower = 0.0;
 
-        lift.setManuealPower(gamepad1.left_stick_y*mult);
-        lift.setPosition(position);
-        lift.periodic();
+        lift.loop(PhotonCore.EXPANSION_HUB.getBulkData());
 
+        lift.setManuelPower(-Math.pow(gamepad1.left_stick_y,3));
+
+        if(previous != position) {
+            lift.setTarget(position);
+            previous = position;
+        }
+
+
+
+        m_telemetry.addData("error", lift.getError());
+        m_telemetry.addData("target", lift.getTarget());
         m_telemetry.addData("gamepad1 leftsticky", gamepad1.left_stick_y);
-        m_telemetry.addData("lift position", lift.getEncoderPosition());
+        m_telemetry.addData("lift position", lift.getState());
         m_telemetry.addData("position", position);
         m_telemetry.update();
     }

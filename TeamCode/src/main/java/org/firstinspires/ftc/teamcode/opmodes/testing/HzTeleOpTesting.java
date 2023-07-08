@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -51,7 +52,8 @@ public class HzTeleOpTesting extends TeleOpMode {
     public void updateOpMode() {
         if(drive) robot.drive.update();
         if(Faga) robot.faga.periodic();
-        if(lift) robot.lift.periodic();
+        if(lift) robot.lift.loop(PhotonCore.EXPANSION_HUB.getBulkData());
+
         if(sensorArray) {
             robot.sensorArmy.periodic();
             telemetry.addData("position", robot.sensorArmy.getPosition());

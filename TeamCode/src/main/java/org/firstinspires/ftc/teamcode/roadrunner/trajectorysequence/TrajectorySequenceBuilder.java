@@ -395,13 +395,13 @@ public class TrajectorySequenceBuilder {
     public TrajectorySequenceBuilder initCone(Robot robot, double offset) {
                 return addTemporalMarker(0.8-offset, ()-> robot.faga.setToOutakeAuto())
                         .addTemporalMarker(1.1-offset, ()-> robot.faga.articulateOuttakeAuto())
-                        .addTemporalMarker(1.5-offset, ()-> robot.lift.setPosition(Lift.highPole-55));
+                        .addTemporalMarker(1.5-offset, ()-> robot.lift.setTarget(Lift.LIFT.HIGH.getTicks()-55));
     }
 
     public TrajectorySequenceBuilder grabCone(Robot robot) {
        return UNSTABLE_addTemporalMarkerOffset(0.0, ()-> {
-            robot.lift.setModeManuel();
-            robot.lift.setPower(Robot.downSpeed);
+            //robot.lift.setModeManuel();
+            robot.lift.setManuelPower(Robot.downSpeed);
             robot.faga.setFourbarPosition(robot.faga.getFourbar().getCurrentPosition() - 650);
         })
                 .UNSTABLE_addTemporalMarkerOffset(0.10, ()-> {
@@ -411,10 +411,10 @@ public class TrajectorySequenceBuilder {
                     robot.lift.setPower(0.0);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.35, ()-> {
-                    robot.lift.setPosition(Lift.highPole-10);
+                    robot.lift.setTarget(RobotConstants.Lift.highPole-10);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.45, ()-> {
-                    robot.lift.setModeAutomatic();
+                  //  robot.lift.setModeAutomatic();
                 })
                 //.UNSTABLE_addTemporalMarkerOffset(0.55, ()-> robot.faga.setArticulation(RobotConstants.Faga.Articulator.autoStack))
                 .UNSTABLE_addTemporalMarkerOffset(0.85, ()-> {

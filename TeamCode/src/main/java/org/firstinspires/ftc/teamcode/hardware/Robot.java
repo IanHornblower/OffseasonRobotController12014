@@ -48,10 +48,10 @@ public class Robot implements Subsystem {
 
     @Override
     public void periodic(){
+        LynxModule.BulkData data = PhotonCore.EXPANSION_HUB.getBulkData();
+
         faga.periodic();
-        lift.periodic();
-        sensorArmy.periodic();
-        //drive.update();
+        lift.loop(data);
 
         grabConeLoop();
         returnConeLoop();
@@ -59,7 +59,7 @@ public class Robot implements Subsystem {
 
     public void autoUpdate(){
         faga.periodic();
-        lift.periodic();
+        //lift.loop();
         sensorArmy.periodic();
 
         grabConeLoop();
@@ -203,7 +203,7 @@ public class Robot implements Subsystem {
                 grabConeTimer.reset();
 
                 if(tele) {
-                    lift.setPosition(0);
+                    lift.setTarget(Lift.LIFT.RETURN);
                 }
                 break;
             case DROPPING:
@@ -273,7 +273,7 @@ public class Robot implements Subsystem {
                 break;
             case RETURNED:
                 faga.clawTransfer();
-                lift.setPosition(pos);
+                lift.setTarget(pos);
                 faga.returnToIntake();
                 if(faga.getFourbar().getCurrentPosition() < 2200) returnConeState = returnCone.OPEN;
                 break;

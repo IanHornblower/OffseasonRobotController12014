@@ -176,7 +176,7 @@ public class RightHighPole extends LinearOpMode {
                 .resetTimer(timer)
                 .waitSeconds(0.2)
                 .setReversed(true)
-                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> robot.lift.setManuealPower(0.0))
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> robot.lift.setManuelPower(0.0))
                 .back(19,
                         Path.augmentVelocity(80),
                         Path.augmentAcceleration(80))
@@ -186,7 +186,7 @@ public class RightHighPole extends LinearOpMode {
         TrajectorySequence parkRight = robot.drive.trajectorySequenceBuilder(atConeStack.get())
                 .resetTimer(timer)
                 .setReversed(true)
-                .UNSTABLE_addTemporalMarkerOffset(0.3, ()-> robot.lift.setManuealPower(0.0))
+                .UNSTABLE_addTemporalMarkerOffset(0.3, ()-> robot.lift.setManuelPower(0.0))
                 .back(41,
                         Path.augmentVelocity(80),
                         Path.augmentAcceleration(80))
@@ -265,7 +265,7 @@ public class RightHighPole extends LinearOpMode {
                         cycle++;
                         if(cycle > 4) {
                             robot.toWall(0);
-                            robot.lift.setPosition(0);
+                            robot.lift.setTarget(0);
                             robot.forwardSpeed = 0.5;
                             matchState = Auto.GRAB_LAST_CONE;
                         }
@@ -273,13 +273,13 @@ public class RightHighPole extends LinearOpMode {
                             robot.toWall(0);
                             switch (cycle) {
                                 case 2:
-                                    robot.lift.setPosition(170);
+                                    robot.lift.setTarget(170);
                                     break;
                                 case 3:
-                                    robot.lift.setPosition(100);
+                                    robot.lift.setTarget(100);
                                     break;
                                 case 4:
-                                    robot.lift.setPosition(60);
+                                    robot.lift.setTarget(60);
                                     break;
 
                             }
@@ -288,7 +288,7 @@ public class RightHighPole extends LinearOpMode {
                     }
                     break;
                 case GRAB_LAST_CONE:
-                    robot.lift.setPosition(0);
+                    robot.lift.setTarget(0);
                     if(!grabLast && robot.tw_state.equals(Robot.TO_WALL.END)) {
                         //if(location == Camera.State.MIDDLE) robot.grabConeBeacon();
                         grabLast = true;
@@ -298,8 +298,8 @@ public class RightHighPole extends LinearOpMode {
                 case PARK:
                     switch (location) {
                         case LEFT:
-                            robot.lift.setModeManuel();
-                            robot.lift.setManuealPower(-0.15);
+                            //robot.lift.setModeManuel();
+                            robot.lift.setManuelPower(-0.15);
 
                             if(!robot.drive.isBusy() && !parked) {
                                 robot.drive.followTrajectorySequenceAsync(parkRight);
@@ -310,13 +310,13 @@ public class RightHighPole extends LinearOpMode {
                             }
                             break;
                         case RIGHT:
-                            robot.lift.setModeManuel();
-                            robot.lift.setManuealPower(-0.15);
+                            //robot.lift.setModeManuel();
+                            robot.lift.setManuelPower(-0.15);
                             matchState = Auto.END;
                             break;
                         case MIDDLE:
-                            robot.lift.setModeManuel();
-                            robot.lift.setManuealPower(-0.15);
+                            //robot.lift.setModeManuel();
+                            robot.lift.setManuelPower(-0.15);
 
                             if(!robot.drive.isBusy() && !parked) {
                                 robot.drive.followTrajectorySequenceAsync(parkMid);

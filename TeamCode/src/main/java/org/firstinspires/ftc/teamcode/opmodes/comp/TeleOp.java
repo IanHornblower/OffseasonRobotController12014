@@ -106,7 +106,7 @@ public class TeleOp extends TeleOpMode {
             eyelidTimer.reset();
         }
         if(gamepad2.square) {
-            robot.lift.setPosition(345);
+            robot.lift.setTarget(Lift.LIFT.LOW_FRONTLOAD);
             robot.faga.setFourbarPosition(2300);
             robot.faga.setArticulation(0.54);
         }
@@ -154,22 +154,22 @@ public class TeleOp extends TeleOpMode {
 
 
         if(gamepad2.dpad_left) {
-            robot.lift.setPosition(40);
+            robot.lift.setTarget(Lift.LIFT.LOW);
             robot.faga.setToOutake();
         }
 
         if(gamepad2.dpad_up) {
-            robot.lift.setPosition(Lift.middlePole+10);
+            robot.lift.setTarget(Lift.LIFT.MID);
             robot.faga.setToOutake();
         }
 
         if(gamepad2.dpad_right) {
-            robot.lift.setPosition(Lift.highPole+10);
+            robot.lift.setTarget(Lift.LIFT.HIGH);
             robot.faga.setToOutake();
         }
 
         if(gamepad2.dpad_down) {
-            robot.lift.setPosition(0);
+            robot.lift.setTarget(Lift.LIFT.RETURN);
             robot.faga.setFourbarPosition(100);
             robot.faga.setArticulation(RobotConstants.Faga.Articulator.intake);
         }
@@ -189,7 +189,7 @@ public class TeleOp extends TeleOpMode {
         }
 
         // Manual Lift
-        robot.lift.setManuealPower(-Math.pow(gamepad2.left_stick_y,3));
+        robot.lift.setManuelPower(-Math.pow(gamepad2.left_stick_y,3));
 
         double loop = System.nanoTime();
         telemetry.addData("Speed", speed);
