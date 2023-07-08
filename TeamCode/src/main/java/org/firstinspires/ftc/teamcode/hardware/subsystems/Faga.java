@@ -77,8 +77,8 @@ public class Faga implements Subsystem {
         voltageTimer = new ElapsedTime();
         voltage = batteryVoltageSensor.getVoltage();
 
-        leftArticulation = hardwareMap.get(Servo.class, "leftArt");
-        rightArticulation = hardwareMap.get(Servo.class, "rightArt");
+        rightArticulation = hardwareMap.get(Servo.class, "leftArt");
+        leftArticulation = hardwareMap.get(Servo.class, "rightArt");
 
         claw = hardwareMap.get(Servo.class, "claw");
         autoGrab = hardwareMap.get(RevColorSensorV3Ex.class, "autograb");
@@ -130,7 +130,7 @@ public class Faga implements Subsystem {
 
     public double mp_target;
     public void updateFourbar() {
-        double encPosition = fourbar.getCurrentPosition();
+        double encPosition = -fourbar.getCurrentPosition();
         double ff = (sine(calc(encPosition)) * -kCos);
 
         //PhotonCore.EXPANSION_HUB.getBulkData().getMotorCurrentPosition(fourbar.getPortNumber());
@@ -155,6 +155,8 @@ public class Faga implements Subsystem {
 
             double output = (pid + ff + fvfa) / voltage * 12.0;
 
+            pid = fourbarController.calculate(encPosition, desiredFourbarPosition);
+            output = pid + ff;
 
             fourbar.setPower(output);
         }
@@ -218,70 +220,41 @@ public class Faga implements Subsystem {
     }
 
     public void returnToIntake() {
-        fourbarController.setPID(-0.0008, 0.0, 0.0);
-        kA = 0.00000015;
-        kV = -0.000015;
-        max_a = 8000;
-        max_v = 15000;
+
         setFourbarPosition(250);
         articulateIntake();
     }
 
     public void setToOutake() {
-        fourbarController.setPID(-0.00095, kI, kD);
-        kA = -0.00000075;
-        kV = -0.000018;
-        max_a = 4500;
-        max_v = 8000;
         setFourbarPosition(3800);
         articulateOuttake();
     }
 
     public void setToOutakeSmall() {
-        fourbarController.setPID(-0.00095, kI, kD);
-        kA = -0.00000075;
-        kV = -0.000018;
-        max_a = 4500;
-        max_v = 8000;
+
         setFourbarPosition(3800);
         setArticulation(RobotConstants.Faga.Articulator.outtakeSmall);
     }
 
     public void setToOutakeAuto() {
-        fourbarController.setPID(-0.00095, kI, kD);
-        kA = -0.00000075;
-        kV = -0.000018;
-        max_a = 4500;
-        max_v = 8000;
+
         setFourbarPosition(3800);
     }
 
     public void setToPrime() {
-        fourbarController.setPID(-0.00095, 0, 0);
-        kA = -0.00000075;
-        kV = -0.000018;
-        max_a = 4500;
-        max_v = 8000;
-        setFourbarPosition(3050);
+
+        setFourbarPosition(3100);
         articulateIntake();
     }
 
     public void setToPrimeTele() {
-        fourbarController.setPID(-0.00095, 0, 0);
-        kA = -0.00000075;
-        kV = -0.000018;
-        max_a = 4500;
-        max_v = 8000;
-        setFourbarPosition(2450);
+
+        setFourbarPosition(3100);
         articulateIntake();
     }
 
     public void setToPrimeAuto() {
-        fourbarController.setPID(-0.0008, 0.0, 0.0);
-        kA = 0.00000015;
-        kV = -0.000015;
-        max_a = 8000;
-        max_v = 12000;
+
         setFourbarPosition(3050);
 
     }

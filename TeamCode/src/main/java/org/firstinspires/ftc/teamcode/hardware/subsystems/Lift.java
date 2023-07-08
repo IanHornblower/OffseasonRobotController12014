@@ -19,9 +19,9 @@ public class Lift implements Subsystem {
     public static double Kg = 0.09; // Was 0.07
 
     public double position = 0;
-    public static double smallPole = 100; // was 150
-    public static double middlePole = 425;
-    public static double highPole = 870;
+    public static double smallPole = 210; // was 150
+    public static double middlePole = 475;
+    public static double highPole = 930;
     public static double highPoleBroken = 1220;
 
     public double error;

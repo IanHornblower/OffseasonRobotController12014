@@ -74,7 +74,7 @@ public class LineCenterTester extends LinearOpMode {
             }
 
             telemetry.addData("position", a.getPosition());
-            telemetry.addData("activy", Arrays.toString(a.sensorActive));
+            telemetry.addData("activy", Arrays.toString(a.getActive()));
             telemetry.addData("is on line", a.isOnLine());
             telemetry.addData("distance to wall", a.getDistanceToWall());
             telemetry.update();

@@ -143,6 +143,19 @@ public class SensorArmy implements Subsystem {
         }
     }
 
+    public void startAutoGrabThread(LinearOpMode opMode) {
+        if(Globals.USING_AUTO_GRAB) {
+            autoGrabThread = new Thread(()-> {
+                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                    synchronized (autograbLock) {
+                        //
+                    }
+                }
+            });
+            autoGrabThread.start();
+        }
+    }
+
     public ColorState[] getArray() {
         return array;
     }

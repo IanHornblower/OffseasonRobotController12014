@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxUnsupportedCommandException;
+import com.qualcomm.hardware.lynx.commands.LynxCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,7 +51,7 @@ public class Robot implements Subsystem {
         faga.periodic();
         lift.periodic();
         sensorArmy.periodic();
-        drive.update();
+        //drive.update();
 
         grabConeLoop();
         returnConeLoop();
@@ -74,6 +78,8 @@ public class Robot implements Subsystem {
 
     public double forwardSpeed = 0.3;
     int cycle = 1;
+
+    // TODO: USE bulk calls to get all lift and fourbar motor information, maybe for rr aswell
 
     PIDController heading = new PIDController(-0.8,0.05,0.0);
     PIDController line = new PIDController(0.04,0,0); // Maybe motion profile the line follow

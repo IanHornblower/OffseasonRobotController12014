@@ -43,7 +43,7 @@ public class FourbarPIDFTuning extends TeleOpMode {
         m_telemetry.addData("velocity", faga.getFourbar().getVelocity());
         m_telemetry.addData("zero", 0);
         m_telemetry.addData("fourbar des", position);
-        m_telemetry.addData("fourbar enc", faga.getFourbar().getCurrentPosition());
+        m_telemetry.addData("fourbar enc", -faga.getFourbar().getCurrentPosition());
         m_telemetry.addData("Volatage", getHardwareMap().voltageSensor.iterator().next().getVoltage());
         m_telemetry.update();
 

@@ -105,6 +105,14 @@ public class TeleOp extends TeleOpMode {
             inCorrect = false;
             eyelidTimer.reset();
         }
+        if(gamepad2.square) {
+            robot.lift.setPosition(345);
+            robot.faga.setFourbarPosition(2300);
+            robot.faga.setArticulation(0.54);
+        }
+        if(gamepad2.left_trigger > 0.1) {
+            robot.faga.clawOpen();
+        }
 
         /*
          * END of Driver Controls
@@ -181,7 +189,7 @@ public class TeleOp extends TeleOpMode {
         }
 
         // Manual Lift
-        robot.lift.setManuealPower(-gamepad2.left_stick_y);
+        robot.lift.setManuealPower(-Math.pow(gamepad2.left_stick_y,3));
 
         double loop = System.nanoTime();
         telemetry.addData("Speed", speed);

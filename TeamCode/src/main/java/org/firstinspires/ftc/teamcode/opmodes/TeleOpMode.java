@@ -46,8 +46,7 @@ public class TeleOpMode extends LinearOpMode {
         PhotonCore.EXPANSION_HUB.clearBulkCache();
         PhotonCore.experimental.setSinglethreadedOptimized(false); // idk i have like 5 threads :(
                                                                    // If crashing is an issue put everyhing into the
-                                                                   // IMU thread to only have 2 threads running instead of 5
-
+                                                                   // IMU thread to only have 2 threads running instead of
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         stopThread = new Thread(()-> {
