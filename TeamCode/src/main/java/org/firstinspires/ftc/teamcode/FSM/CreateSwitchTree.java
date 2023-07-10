@@ -1,5 +1,3 @@
-package org.firstinspires.ftc.teamcode.FSM;
-
 import java.util.ArrayList;
 
 public class CreateSwitchTree {
@@ -9,11 +7,10 @@ public class CreateSwitchTree {
 
         addState("IDLE");
         addState("STARTING");
-        addState("DROPPING_LIFT");
-        addState("GRAB_CONE");
-        addState("LIFT_ARTICULATE");
+        addState("DROP");
+        addState("RETURN");
+        addState("REBOUND");
         addState("END");
-
         System.out.println(getSwitchTree());
     }
 

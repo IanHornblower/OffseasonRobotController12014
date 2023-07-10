@@ -13,13 +13,12 @@ public class RobotConstants {
     public static class Faga {
         @Config
         public static class Articulator {
-            public static double outerbound = 0.19;
-            public static double innerbound = 0.81;
-            public static double intake = 0.45;
-            public static double outtake = 0.38;
+            public static double intake = 0.57;
+            public static double outtake = 0.48;
+            public static double frontLoad = 0.65;
             public static double outtakeAuto = 0.45;
             public static double outtakeSmall = 0.46;
-            public static double autoStack = 0.32;
+            public static double autoStack = 0.54;
         }
         @Config
         public static class Claw {
@@ -30,10 +29,13 @@ public class RobotConstants {
 
         @Config
         public static class Fourbar {
+            public static double outtake = 3700;
+
+            public static double tolerance = 100;
             public static double ticksPerRev = 8192;
             public static double max_v = 9000;
             public static double max_a = 8000;
-            public static double kP = 0.00025, kD = 0.005, kCos = -0.01, kI = 0.0, kSin = 0;
+            public static double kP = 0.00025, kD = 0.0, kCos = 0.12, kI = 0.0, kSin = 0;
             public static double kV = 0.00003, kA = 0.000042;
         }
     }
@@ -74,10 +76,10 @@ public class RobotConstants {
         public static double tolerance = 15;
         public static double downSpeed = -0.42; // -0.35
 
-        public static double intake = 80;
-        public static double low_frontload = 120;
-        public static double smallPole = 210; // was 150
-        public static double middlePole = 475;
-        public static double highPole = 930;
+        public static double intake = 130;
+        public static double low_frontload = 482;
+        public static double smallPole = 165; // was 150
+        public static double middlePole = 540;
+        public static double highPole = 1000; // 990
     }
 }

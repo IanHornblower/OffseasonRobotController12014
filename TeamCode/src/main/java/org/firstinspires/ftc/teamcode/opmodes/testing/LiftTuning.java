@@ -6,14 +6,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Faga;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode;
+import org.firstinspires.ftc.teamcode.OldAssShit.TeleOpModeDEPRICATED;
 
 @Config
 @TeleOp(name = "Lift Tuner", group = "Tuning")
-public class LiftTuning extends TeleOpMode {
+public class LiftTuning extends TeleOpModeDEPRICATED {
     Lift lift;
 
     MultipleTelemetry m_telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

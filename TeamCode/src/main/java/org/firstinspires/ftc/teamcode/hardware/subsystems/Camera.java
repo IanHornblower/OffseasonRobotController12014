@@ -35,10 +35,23 @@ public class Camera {
     int RIGHT = 11;
 
     public enum State {
-        LEFT,
-        RIGHT,
-        MIDDLE,
-        NONE
+        LEFT(0),
+        RIGHT(1),
+        MIDDLE(2),
+        NONE(0);
+
+        int value;
+
+        State(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return  value;
+        }
+
+
+
     }
 
     AprilTagDetection tagOfInterest = null;

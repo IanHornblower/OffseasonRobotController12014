@@ -20,6 +20,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Auto.Auto;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.hardware.RobotConstants;
@@ -125,6 +126,21 @@ public class TrajectorySequenceBuilder {
                 baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel
         );
     }
+
+    /*
+     *
+     * Sequence Actions for DROP OFF and that's literally it :)
+     *
+     */
+
+
+    /**
+     *
+     * Normal RR Actions for the DT
+     *
+     */
+
+
 
     public TrajectorySequenceBuilder lineTo(Vector2d endPosition) {
         return addPath(() -> currentTrajectoryBuilder.lineTo(endPosition, currentVelConstraint, currentAccelConstraint));
@@ -386,59 +402,6 @@ public class TrajectorySequenceBuilder {
         this.currentTurnConstraintMaxAngAccel = baseTurnConstraintMaxAngAccel;
 
         return this;
-    }
-
-    public TrajectorySequenceBuilder resetTimer(ElapsedTime timer) {
-        return UNSTABLE_addTemporalMarkerOffset(0, timer::reset);
-    }
-
-    public TrajectorySequenceBuilder initCone(Robot robot, double offset) {
-                return addTemporalMarker(0.8-offset, ()-> robot.faga.setToOutakeAuto())
-                        .addTemporalMarker(1.1-offset, ()-> robot.faga.articulateOuttakeAuto())
-                        .addTemporalMarker(1.5-offset, ()-> robot.lift.setTarget(Lift.LIFT.HIGH.getTicks()-55));
-    }
-
-    public TrajectorySequenceBuilder grabCone(Robot robot) {
-       return UNSTABLE_addTemporalMarkerOffset(0.0, ()-> {
-            //robot.lift.setModeManuel();
-            robot.lift.setManuelPower(Robot.downSpeed);
-            robot.faga.setFourbarPosition(robot.faga.getFourbar().getCurrentPosition() - 650);
-        })
-                .UNSTABLE_addTemporalMarkerOffset(0.10, ()-> {
-                    robot.faga.clawClose();
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.15, ()-> {
-                    robot.lift.setPower(0.0);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.35, ()-> {
-                    robot.lift.setTarget(RobotConstants.Lift.highPole-10);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.45, ()-> {
-                  //  robot.lift.setModeAutomatic();
-                })
-                //.UNSTABLE_addTemporalMarkerOffset(0.55, ()-> robot.faga.setArticulation(RobotConstants.Faga.Articulator.autoStack))
-                .UNSTABLE_addTemporalMarkerOffset(0.85, ()-> {
-                    robot.faga.articulateOuttakeAuto();
-                    robot.faga.setToOutakeAuto();
-                });
-    }
-
-    public TrajectorySequenceBuilder dropPreload(Robot robot, double pos) {
-        return UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> {
-            robot.faga.auto = false;
-            robot.faga.manPower = -0.25;
-        })
-                .UNSTABLE_addTemporalMarkerOffset(0.05, ()-> {
-                    robot.faga.manPower = 0.0;
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0,()-> {
-                    robot.faga.articulateIntake();
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.15, ()-> robot.faga.clawOpen())
-                .UNSTABLE_addTemporalMarkerOffset(0.45,()-> {
-                    robot.faga.auto = true;
-                    robot.returnCone(pos);
-                });
     }
 
     public TrajectorySequenceBuilder addTemporalMarker(MarkerCallback callback) {

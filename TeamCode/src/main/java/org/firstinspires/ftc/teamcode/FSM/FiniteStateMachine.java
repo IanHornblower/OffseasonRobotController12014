@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.FSM;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
 
 public class FiniteStateMachine {
 
     private int state = 0;
+    private boolean hasEnded = false;
     private ArrayList<String> FSM_STATE = new ArrayList<>();
     public ElapsedTime stateTimer = new ElapsedTime();
 
@@ -27,22 +30,27 @@ public class FiniteStateMachine {
 
     // Augment the current state to 1 to start the FSM
     public void start() {
+        hasEnded = false;
+
         state = 1;
         stateTimer.reset();
     }
 
     public void start(Boolean bool) {
         if(bool) {
-            state = 1;
-            stateTimer.reset();
+            start();
         }
+    }
+
+    public void nextState(double time) {
+        nextState(stateTimer.seconds() > time);
     }
 
     public void nextState() {
         if(state + 1 > FSM_STATE.size() - 1) reset();
         else {
             stateTimer.reset();
-            state = 1 + FSM_STATE.indexOf(getState());
+            state++;
         }
     }
 
@@ -51,7 +59,7 @@ public class FiniteStateMachine {
     }
 
     public void nextState(boolean bool) {
-        if(!bool) nextState(); // weird behavior
+        if(bool) nextState(); // weird behavior
     }
 
     // always run // Make sure to override
@@ -69,9 +77,19 @@ public class FiniteStateMachine {
     }
 
     public boolean ended() {
+        if(getState().equals("END")) hasEnded = true;
         return getState().equals("END");
     }
 
+    public boolean hasEnded() {
+        return hasEnded;
+    }
+
+    public boolean idle() {
+        return getState().equals("IDLE");
+    }
+
+    @NotNull
     public static void updateFSMs(FiniteStateMachine... fsms) {
         for(FiniteStateMachine fsm: fsms) {
             fsm.update();

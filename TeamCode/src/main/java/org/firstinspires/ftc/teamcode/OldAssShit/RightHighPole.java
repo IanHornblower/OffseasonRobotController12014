@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.comp.auto;
+package org.firstinspires.ftc.teamcode.OldAssShit;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -12,32 +12,35 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.hardware.RobotConstants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Camera;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Mogus;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.SensorArmy;
+import org.firstinspires.ftc.teamcode.opmodes.comp.auto.AutoConst;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.roadrunner.Path;
 
 import java.util.function.Supplier;
 
+/*
 @Autonomous(group = "!")
-public class LeftHighPole extends LinearOpMode {
+public class RightHighPole extends LinearOpMode {
     Robot robot;
     ElapsedTime timer;
     ElapsedTime matchTimer;
 
+    boolean isAutoDone = false;
+
     Mogus mogus;
 
-    Pose2d start = new Pose2d(-39, -62, Math.toRadians(-90));
+    Pose2d start = new Pose2d(39, -62, Math.toRadians(-90));
 
-    Vector2d cycle1 = new Vector2d(-29.55, -0.85);
-    double cycle1ang = Math.toRadians(33.5);
-    Vector2d cycle2 = new Vector2d(-29.55, -1.5);
-    double cycle2ang = Math.toRadians(33.5);
-    Vector2d cycle3 = new Vector2d(-29.55, -2.7);
-    double cycle3ang = Math.toRadians(33.5);
-    Vector2d cycle4 = new Vector2d(-29.55, -2.7);
-    double cycle4ang = Math.toRadians(33.5);
+    Vector2d cycle1 = new Vector2d(30, -2.2);
+    double cycle1ang = Math.toRadians(146.5);
+    Vector2d cycle2 = new Vector2d(29.55, -2.8);
+    double cycle2ang = Math.toRadians(146.5);
+    Vector2d cycle3 = new Vector2d(29.55, -3.4);
+    double cycle3ang = Math.toRadians(146.5);
+    Vector2d cycle4 = new Vector2d(29.55, -3.7);
+    double cycle4ang = Math.toRadians(146.5);
 
 
     Supplier<Pose2d> atConeStack;
@@ -60,10 +63,9 @@ public class LeftHighPole extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        mogus = new Mogus();
         timer = new ElapsedTime();
         matchTimer = new ElapsedTime();
-
-        mogus = new Mogus();
 
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -82,17 +84,17 @@ public class LeftHighPole extends LinearOpMode {
 
                 .initCone(robot, 0.6)
 
-                .splineTo(new Vector2d(-35.9, -36), Math.toRadians(90),
+                .splineTo(new Vector2d(35, -36), Math.toRadians(90),
                         Path.augmentVelocity(65),
                         Path.augmentAcceleration(60))
                 .resetConstraints()
-                .splineTo(new Vector2d(-31, -7.2), Math.toRadians(32))
+                .splineTo(new Vector2d(29.2, -7.2), Math.toRadians(148))
 
                 .dropPreload(robot, 260)
 
                 .setReversed(false)
 
-                .splineTo(new Vector2d(-57, -13),Math.toRadians(180))
+                .splineTo(new Vector2d(57, -13),Math.toRadians(0))
                 .build();
 
         atConeStack = toHighPoleAndStack::end;
@@ -111,7 +113,7 @@ public class LeftHighPole extends LinearOpMode {
                 .dropPreload(robot, 270)
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-60, -12),Math.toRadians(180),
+                .splineTo(new Vector2d(60, -12),Math.toRadians(0),
                         Path.augmentVelocity(42),
                         Path.augmentAcceleration(34))
                 .build();
@@ -129,7 +131,7 @@ public class LeftHighPole extends LinearOpMode {
                 .dropPreload(robot, 270)
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-60, -12),Math.toRadians(180),
+                .splineTo(new Vector2d(60, -12),Math.toRadians(0),
                         Path.augmentVelocity(42),
                         Path.augmentAcceleration(34))
                 .build();
@@ -147,7 +149,7 @@ public class LeftHighPole extends LinearOpMode {
                 .dropPreload(robot, 270)
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-60, -12),Math.toRadians(180),
+                .splineTo(new Vector2d(60, -12),Math.toRadians(0),
                         Path.augmentVelocity(42),
                         Path.augmentAcceleration(34))
                 .build();
@@ -165,7 +167,7 @@ public class LeftHighPole extends LinearOpMode {
                 .dropPreload(robot, 270)
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-60, -12),Math.toRadians(180),
+                .splineTo(new Vector2d(60, -12),Math.toRadians(0),
                         Path.augmentVelocity(42),
                         Path.augmentAcceleration(34))
                 .build();
@@ -210,20 +212,20 @@ public class LeftHighPole extends LinearOpMode {
         waitForStart();
 
         matchTimer.reset();
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && !isAutoDone) {
             mogus.periodic();
-
-            telemetry.addData("toWallState", robot.tw_state.toString());
+         //   telemetry.addData("toWallState", robot.tw_state.toString());
             telemetry.addData("auto state", matchState.toString());
             telemetry.addData("match time", matchTimer.seconds());
             telemetry.addData("cycle", cycle);
 
             telemetry.addLine();
             telemetry.addLine();
+
             telemetry.addLine(mogus.get35pxTwerk());
             telemetry.update();
 
-            robot.autoUpdate();
+           // robot.autoUpdate();
 
             switch (matchState) {
                 case PRELOAD:
@@ -231,15 +233,15 @@ public class LeftHighPole extends LinearOpMode {
                     if(timer.seconds() > toHighPoleAndStack.duration()-0.05) {
                         timer.reset();
 
-                        robot.toWall();
+                //        robot.toWall(0);
                         matchState = Auto.TO_CONE_STACK;
                     }
                     break;
                 case TO_CONE_STACK:
-                    if(robot.tw_state.equals(Robot.TO_WALL.END)) {
-                        matchState = Auto.TO_HIGH_POLE;
-                        timer.reset();
-                    }
+               //    if(robot.tw_state.equals(Robot.TO_WALL.END)) {
+               //        matchState = Auto.TO_HIGH_POLE;
+               //        timer.reset();
+               //    }
                     break;
                 case TO_HIGH_POLE:
                     robot.drive.update();
@@ -264,13 +266,13 @@ public class LeftHighPole extends LinearOpMode {
                         timer.reset();
                         cycle++;
                         if(cycle > 4) {
-                            robot.toWall();
-                            robot.lift.setTarget(Lift.LIFT.RETURN);
-                            robot.forwardSpeed = 0.5;
+                   //         robot.toWall(0);
+                            robot.lift.setTarget(0);
+                    //        robot.forwardSpeed = 0.5;
                             matchState = Auto.GRAB_LAST_CONE;
                         }
                         else {
-                            robot.toWall();
+                           // robot.toWall(0);
                             switch (cycle) {
                                 case 2:
                                     robot.lift.setTarget(170);
@@ -288,21 +290,16 @@ public class LeftHighPole extends LinearOpMode {
                     }
                     break;
                 case GRAB_LAST_CONE:
-                    robot.lift.setTarget(Lift.LIFT.RETURN);
-                    if(!grabLast && robot.tw_state.equals(Robot.TO_WALL.END)) {
-                        //if(location == Camera.State.MIDDLE) robot.grabConeBeacon();
-                        grabLast = true;
-                        matchState = Auto.PARK;
-                    }
+                    robot.lift.setTarget(0);
+              //      if(!grabLast && robot.tw_state.equals(Robot.TO_WALL.END)) {
+              //          //if(location == Camera.State.MIDDLE) robot.grabConeBeacon();
+              //          grabLast = true;
+              //          matchState = Auto.PARK;
+              //      }
                      break;
                 case PARK:
                     switch (location) {
                         case LEFT:
-                            //robot.lift.setModeManuel();
-                            robot.lift.setManuelPower(-0.15);
-                            matchState = Auto.END;
-                            break;
-                        case RIGHT:
                             //robot.lift.setModeManuel();
                             robot.lift.setManuelPower(-0.15);
 
@@ -313,6 +310,11 @@ public class LeftHighPole extends LinearOpMode {
                             if(!robot.drive.isBusy() && parked) {
                                 matchState = Auto.END;
                             }
+                            break;
+                        case RIGHT:
+                            //robot.lift.setModeManuel();
+                            robot.lift.setManuelPower(-0.15);
+                            matchState = Auto.END;
                             break;
                         case MIDDLE:
                             //robot.lift.setModeManuel();
@@ -333,13 +335,16 @@ public class LeftHighPole extends LinearOpMode {
                 case END:
                     robot.lift.setPower(0.0);
 
-                    //sleep(1000000);
                     robot.drive.stop();
                     robot.faga.stopFourbar();
                     robot.lift.setPower(0);
+                    isAutoDone = true;
                     stop();
                     break;
             }
         }
     }
 }
+
+
+ */

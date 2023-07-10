@@ -43,7 +43,7 @@ public class FollowTrajectorySequence extends FiniteStateMachine {
             case "IDLE":
                 break;
             case "STARTING":
-                robot.drive.followTrajectorySequence(trajectorySequence);
+                robot.drive.followTrajectorySequenceAsync(trajectorySequence);
                 stateTimer.reset();
 
                 setState("RUNNING");
@@ -51,7 +51,7 @@ public class FollowTrajectorySequence extends FiniteStateMachine {
             case "RUNNING":
                 robot.drive.update();
 
-                nextState(trajectorySequence.duration() + endOffset > stateTimer.seconds());
+                nextState(trajectorySequence.duration() + endOffset < stateTimer.seconds());
                 break;
             case "END":
                 robot.drive.stop();

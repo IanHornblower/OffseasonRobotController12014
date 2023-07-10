@@ -4,16 +4,17 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Eyelids;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 
-import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode;
+import org.firstinspires.ftc.teamcode.OldAssShit.TeleOpModeDEPRICATED;
 
+@Disabled
 @Config
 @TeleOp(name = "Intake Test", group = "Tuning")
-public class DriveTrainIntakeTest extends TeleOpMode {
+public class DriveTrainIntakeTest extends TeleOpModeDEPRICATED {
     Intake intake;
 
     public static double intakePower = 0.0;

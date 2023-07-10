@@ -68,6 +68,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     static double rightRet = 0, rightReleax = 1;
     static double perpRet = 1, perptReleax = 0;
 
+    private boolean imuActive = false;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0, 0.5);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0.5);
 
@@ -191,18 +193,23 @@ public class SampleMecanumDrive extends MecanumDrive {
         return imuVelocity;
     }
 
-    public void startIMUThread(LinearOpMode opMode) {
+    public void startIMUThread(LinearOpMode opMode, boolean isAutoActive) {
         if (Globals.USING_IMU) {
             imuThread = new Thread(() -> {
-                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                while (!opMode.isStopRequested() && (opMode.opModeIsActive() || isAutoActive)) {
                     synchronized (imuLock) {
                         imuAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
                         imuVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+                        imuActive = true;
                     }
                 }
             });
-            imuThread.start();
+            if(!imuActive) imuThread.start();
         }
+    }
+
+    public boolean isImuActive() {
+        return imuActive;
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

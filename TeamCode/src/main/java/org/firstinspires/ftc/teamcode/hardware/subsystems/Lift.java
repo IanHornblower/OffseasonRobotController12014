@@ -10,16 +10,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
 
+    // debug - DELETE when lift works
+    public int incrmital = 0;
+
     private DcMotorEx lower;
     private DcMotorEx middle;
     private DcMotorEx upper;
 
-    private double error;
+    public double error;
     private final int encPort;
-    private double target = 0;
+    public double target = 0;
     private double liftState = 0;
-    private double power;
-    private double manuelPower = 0.0;
+    private double power = 0;
+    private double manualPower = 0.0;
 
     public enum LIFT {
         RETURN(0),
@@ -41,13 +44,13 @@ public class Lift {
     }
 
     public enum STATE {
-        MANUEL,
+        MANUAL,
         RUNNING,
         STOP,
         IDLE,
     }
 
-    private STATE state = STATE.IDLE;
+    public STATE state = STATE.IDLE;
 
     public Lift(HardwareMap hardwareMap) {
         lower = hardwareMap.get(DcMotorEx.class, "lower");
@@ -83,8 +86,8 @@ public class Lift {
         return target;
     }
 
-    public void setManuelPower(double manuelPower) {
-        this.manuelPower = manuelPower;
+    public void setManuelPower(double manualPower) {
+        this.manualPower = manualPower;
     }
 
     public double getState() {
@@ -102,6 +105,29 @@ public class Lift {
     public void setTarget(double target) {
         state = STATE.RUNNING;
         this.target = target;
+    }
+
+    public void setTarget(int cycle) {
+        switch (cycle) {
+            case 0:
+                setTarget(250);
+                break;
+            case 1:
+                setTarget(210);
+                break;
+            case 2:
+                setTarget(180);
+                break;
+            case 3:
+                setTarget(150);
+                break;
+            case 4:
+                setTarget(120);
+                break;
+            case 5:
+                setTarget(90);
+                break;
+        }
     }
 
     public void setTarget(LIFT target) {
@@ -130,15 +156,18 @@ public class Lift {
     }
 
     public void loop(LynxModule.BulkData data) {
+
+        incrmital++;
+
         liftState = data.getMotorCurrentPosition(encPort);
         error = target - liftState;
 
-        if(Math.abs(manuelPower) > 0.01) state = STATE.MANUEL;
+        if(Math.abs(manualPower) > 0.01) state = STATE.MANUAL;
 
         switch (state) {
-            case MANUEL:
-                setPower(manuelPower + Kg);
-                if(manuelPower == 0.0) state = STATE.STOP;
+            case MANUAL:
+                setPower(manualPower + Kg);
+                if(manualPower == 0.0) state = STATE.STOP;
                 break;
             case RUNNING:
                 updateLift();

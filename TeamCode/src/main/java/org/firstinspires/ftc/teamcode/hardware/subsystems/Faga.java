@@ -2,27 +2,25 @@ package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import com.outoftheboxrobotics.photoncore.Neutrino.RevColorSensor.RevColorSensorV3Ex;
-import com.outoftheboxrobotics.photoncore.PhotonCore;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.Globals;
 import org.firstinspires.ftc.teamcode.hardware.RobotConstants;
 import org.firstinspires.ftc.teamcode.hardware.interfaces.Subsystem;
 import org.firstinspires.ftc.teamcode.util.PID.PIDController;
-import org.firstinspires.ftc.teamcode.util.motionprofile.MotionProfile;
 import org.firstinspires.ftc.teamcode.util.motionprofile.MotionProfileGenerator;
 import org.firstinspires.ftc.teamcode.util.motionprofile.MotionState;
 
 import static org.firstinspires.ftc.teamcode.hardware.RobotConstants.Faga.Claw.*;
 import static org.firstinspires.ftc.teamcode.hardware.RobotConstants.Faga.Fourbar.*;
+import static org.firstinspires.ftc.teamcode.hardware.RobotConstants.Faga.Articulator.*;
 
 @Config
-public class Faga implements Subsystem {
+public class Faga {
     // F: Fourbar
     // A: Articulation
     // G: Grabbing
@@ -37,34 +35,26 @@ public class Faga implements Subsystem {
 
     // Claw
     Servo claw;
-    RevColorSensorV3Ex autoGrab;
 
-    // Motion Profile for Fourbar
-
-    private MotionProfile profile;
-
-    public double previous_target = 5;
-
-    VoltageSensor batteryVoltageSensor;
-    ElapsedTime time;
-    ElapsedTime voltageTimer;
-    double voltage;
-    public double manPower = 0.0;
-    public boolean auto = true;
+    private double error;
+    private final int encPort;
+    public double target = 0;
+    private double fourbarState = 0;
+    private double power = 0;
+    private double manualPower = 0.0;
+    private double ff = 0.0;
 
     public static enum STATE {
-        ACTIVE,
-        MANUEL,
-        DISABLE,
-        RESTING
+        MANUAL,
+        RUNNING,
+        LOCK,
+        STOP,
+        IDLE
     }
 
-    STATE state = STATE.ACTIVE;
+    public STATE state = STATE.IDLE;
 
-    double desiredFourbarPosition = 0;
     PIDController fourbarController = new PIDController(RobotConstants.Faga.Fourbar.kP, RobotConstants.Faga.Fourbar.kI, RobotConstants.Faga.Fourbar.kD);
-
-    MotionState targetState;
 
     public Faga(HardwareMap hardwareMap) {
         // Hardware Map
@@ -72,98 +62,80 @@ public class Faga implements Subsystem {
         fourbar.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fourbar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-        time = new ElapsedTime();
-        voltageTimer = new ElapsedTime();
-        voltage = batteryVoltageSensor.getVoltage();
-
         rightArticulation = hardwareMap.get(Servo.class, "leftArt");
         leftArticulation = hardwareMap.get(Servo.class, "rightArt");
 
         claw = hardwareMap.get(Servo.class, "claw");
-        autoGrab = hardwareMap.get(RevColorSensorV3Ex.class, "autograb");
 
-        //claw = hardwareMap.get(Servo.class, "claw");
+        encPort = fourbar.getPortNumber();
     }
 
-    private double prevManPower = 0.0;
+    public void loop(LynxModule.BulkData data) {
+        fourbarState = data.getMotorCurrentPosition(encPort);
+        ff = sine(calc(fourbarState)) * kCos;
+        power = fourbarController.calculate( fourbarState, target) + ff;
+        error = fourbarController.getPositionError();
+        if(atTarget()) state = STATE.LOCK;
+        if((Math.abs(manualPower) > 0.01) && !Globals.IS_AUTO) state = STATE.MANUAL;
 
-    @Override
-    public void periodic() {
         switch (state) {
-            case ACTIVE:
-                updateFourbar();
+            case MANUAL:
+                setPower(manualPower + ff);
+                if(manualPower == 0.0 || Globals.IS_AUTO) state = STATE.LOCK;
                 break;
-            case MANUEL:
-                if(manPower != prevManPower) {
-                    fourbar.setPower(manPower);
-                    prevManPower = manPower;
-                }
+            case RUNNING:
+                setPower(power);
                 break;
-            case DISABLE:
-                fourbar.setPower(0.0);
-                state = STATE.RESTING;
+            case LOCK:
+                setPower(ff);
+                state = STATE.IDLE;
                 break;
-            case RESTING:
-                // do literally nothing
+            case STOP:
+                setPower(0.0);
+                state = STATE.IDLE;
+                break;
+            case IDLE:
+
+                //if(fourbar.getPower() != 0 || data.isMotorOverCurrent(encPort)) {
+                //    fourbar.setPower(0.0);
+                //}
+                // do nothing
                 break;
         }
 
 
     }
 
-    public void activate() {
-        state = STATE.ACTIVE;
-    }
-
-    public void disable() {
-        state = STATE.DISABLE;
-    }
-
-    public void manual() {
-        state = STATE.MANUEL;
-    }
-
-    public void DEPRICATED_SET_TO_REST() {
-        state = STATE.RESTING;
-    }
-
-    public double mp_target;
-    public void updateFourbar() {
-        double encPosition = -fourbar.getCurrentPosition();
-        double ff = (sine(calc(encPosition)) * -kCos);
-
-        //PhotonCore.EXPANSION_HUB.getBulkData().getMotorCurrentPosition(fourbar.getPortNumber());
-
-        if(auto) {
-
-            if (desiredFourbarPosition != previous_target) {
-                profile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(previous_target, 0), new MotionState(desiredFourbarPosition, 0), max_v, max_a);
-                time.reset();
-                previous_target = desiredFourbarPosition;
-            }
-
-            if (voltageTimer.seconds() > 5) {
-                voltage = batteryVoltageSensor.getVoltage();
-                voltageTimer.reset();
-            }
-
-            targetState = profile == null ? new MotionState(0, 0) : profile.get(time.seconds());
-            mp_target = targetState.getX();
-            double pid = fourbarController.calculate(encPosition, mp_target);
-            double fvfa = (kV * targetState.getV()) + (kA * targetState.getA());
-
-            double output = (pid + ff + fvfa) / voltage * 12.0;
-
-            pid = fourbarController.calculate(encPosition, desiredFourbarPosition);
-            output = pid + ff;
-
-            fourbar.setPower(output);
+    double previousPower = 0.0;
+    public void setPower(double power) {
+        if(previousPower != power) {
+            fourbar.setPower(power);
+            previousPower = power;
         }
-        else {
-            fourbar.setPower(manPower + ff);
-        }
+    }
 
+    public double getTarget() {
+        return target;
+    }
+
+    public void setManuelPower(double manualPower) {
+        this.manualPower = manualPower;
+    }
+
+    public double getState() {
+        return fourbarState;
+    }
+
+    public double getError() {
+        return error;
+    }
+
+    public boolean atTarget() {
+        return Math.abs(error) < tolerance;
+    }
+
+    public void stop() {
+        state = STATE.STOP;
     }
 
     public void setClawPosition(double position) {
@@ -172,11 +144,11 @@ public class Faga implements Subsystem {
 
     public void updatePIDF() {
         fourbarController.setPID(kP, kI, kD);
-        //fourbarControllerCustom = new CustomPID(kP, kI, kD, kCos);
     }
 
     public void setFourbarPosition(double position) {
-        this.desiredFourbarPosition = position;
+        state = STATE.RUNNING;
+        this.target = position;
     }
 
     public double calc(double enc) {
@@ -208,55 +180,15 @@ public class Faga implements Subsystem {
     }
 
     public void articulateIntake() {
-        setArticulation(RobotConstants.Faga.Articulator.intake);
+        setArticulation(intake);
     }
 
     public void articulateOuttake() {
         setArticulation(RobotConstants.Faga.Articulator.outtake);
     }
 
-    public void articulateOuttakeAuto() {
-        setArticulation(RobotConstants.Faga.Articulator.outtakeAuto);
-    }
-
-    public void returnToIntake() {
-
-        setFourbarPosition(250);
-        articulateIntake();
-    }
-
-    public void setToOutake() {
-        setFourbarPosition(3800);
-        articulateOuttake();
-    }
-
-    public void setToOutakeSmall() {
-
-        setFourbarPosition(3800);
-        setArticulation(RobotConstants.Faga.Articulator.outtakeSmall);
-    }
-
-    public void setToOutakeAuto() {
-
-        setFourbarPosition(3800);
-    }
-
-    public void setToPrime() {
-
-        setFourbarPosition(3100);
-        articulateIntake();
-    }
-
-    public void setToPrimeTele() {
-
-        setFourbarPosition(3100);
-        articulateIntake();
-    }
-
-    public void setToPrimeAuto() {
-
-        setFourbarPosition(3050);
-
+    public void articulateFrontLoad() {
+        setArticulation(frontLoad);
     }
 
     //Bhaskara I's sine approximation  // goob

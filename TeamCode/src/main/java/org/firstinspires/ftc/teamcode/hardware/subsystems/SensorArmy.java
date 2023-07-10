@@ -29,6 +29,8 @@ public class SensorArmy implements Subsystem {
         BLUE
     }
 
+    private boolean tapeActive = false, irActive = false, autoGrabActive = false;
+
     private final Object distanceLock = new Object();
     @GuardedBy("distanceLock")
     private Rev2mDistanceSensorEx leftDistance, rightDistance;
@@ -40,7 +42,7 @@ public class SensorArmy implements Subsystem {
     private RevColorSensorV3Ex l2, l1,  m, r1, r2;
     private Thread tapeThread;
     private ColorState l2_state, l1_state, m_state, r1_state, r2_state;
-    private ColorState[] array;
+    private ColorState[] array = new ColorState[5];
 
 
     // TODO: do the autograb thread but rn it lame fr | LLLL
@@ -80,27 +82,28 @@ public class SensorArmy implements Subsystem {
         r2.setUpdateRate(RevColorSensorV3Ex.UPDATE_RATE.HIGH_SPEED);
     }
 
-    public void startAutoOpMode(LinearOpMode opMode) {
-        startDistanceThread(opMode);
-        startTapeThread(opMode);
+    public void startAutoOpMode(LinearOpMode opMode, boolean inAutoLoop) {
+        startDistanceThread(opMode, inAutoLoop);
+        startTapeThread(opMode, inAutoLoop);
     }
 
-    public void startTeleOpMode(LinearOpMode opMode) {
-
+    public void startTeleOpMode(LinearOpMode opMode, boolean inAutoLoop) {
+        startAutoGrabThread(opMode, inAutoLoop);
     }
 
-    public void startAllOpMode(LinearOpMode opMode) {
-        startAutoOpMode(opMode);
-        startTeleOpMode(opMode);
+    public void startAllOpMode(LinearOpMode opMode, boolean inAutoLoop) {
+        startAutoOpMode(opMode, inAutoLoop);
+        startTeleOpMode(opMode, inAutoLoop);
     }
 
-    public void startDistanceThread(LinearOpMode opMode) {
+    public void startDistanceThread(LinearOpMode opMode, boolean inAutoLoop) {
         if(Globals.USING_IR) {
             distanceThread = new Thread(()-> {
-                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                while (!opMode.isStopRequested() && (opMode.opModeIsActive()) || inAutoLoop) {
                     synchronized (distanceLock) {
                         leftDistance_in = leftDistance.getDistance(DistanceUnit.INCH);
                         rightDistance_in = rightDistance.getDistance(DistanceUnit.INCH);
+                        irActive = true;
                     }
                 }
             });
@@ -108,14 +111,15 @@ public class SensorArmy implements Subsystem {
         }
     }
 
-    public void startTapeThread(LinearOpMode opMode) {
+    public void startTapeThread(LinearOpMode opMode, boolean inAutoLoop) {
         if(Globals.USING_TAPE_SENSORS) {
             tapeThread = new Thread(()-> {
-                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                while (!opMode.isStopRequested() && (opMode.opModeIsActive()) || inAutoLoop) {
                     synchronized (tapeLock) {
                         l2_state = new ColorState(l2.red(), l2.green(), l2.blue(), l2.alpha(), l2.getLightDetected(), l2.getDistance(DistanceUnit.INCH));
                         l1_state = new ColorState(l1.red(), l1.green(), l1.blue(), l1.alpha(), l1.getLightDetected(), l1.getDistance(DistanceUnit.INCH));
-                        m_state = new ColorState(m.red(), m.green(), m.blue(), m.alpha(), m.getLightDetected(), m.getDistance(DistanceUnit.INCH));
+                        //m_state = new ColorState(m.red(), m.green(), m.blue(), m.alpha(), m.getLightDetected(), m.getDistance(DistanceUnit.INCH));
+                        m_state = new ColorState(0, 0, 0, 0, 0, 0);
                         r1_state = new ColorState(r1.red(), r1.green(), r1.blue(), r1.alpha(), r1.getLightDetected(), r1.getDistance(DistanceUnit.INCH));
                         r2_state = new ColorState(r2.red(), r2.green(), r2.blue(), r2.alpha(), r2.getLightDetected(), r2.getDistance(DistanceUnit.INCH));
 
@@ -135,25 +139,44 @@ public class SensorArmy implements Subsystem {
                                 sensorActive[i] = array[i].red() > threshold;
                             }
                         }
-
+                        tapeActive = true;
                     }
                 }
             });
-            tapeThread.start();
+            if(!tapeActive) tapeThread.start();
         }
     }
 
-    public void startAutoGrabThread(LinearOpMode opMode) {
+    public void startAutoGrabThread(LinearOpMode opMode, boolean inAutoLoop) {
         if(Globals.USING_AUTO_GRAB) {
             autoGrabThread = new Thread(()-> {
-                while (!opMode.isStopRequested() && opMode.opModeIsActive()) {
+                while (!opMode.isStopRequested() && (opMode.opModeIsActive()) || inAutoLoop) {
                     synchronized (autograbLock) {
-                        //
+                        autoGrab_state = new ColorState(
+                                autoGrab.red(),
+                                autoGrab.green(),
+                                autoGrab.blue(),
+                                autoGrab.alpha(),
+                                autoGrab.getLightDetected(),
+                                autoGrab.getDistance(DistanceUnit.MM));
+                        autoGrabActive = true;
                     }
                 }
             });
-            autoGrabThread.start();
+            if(!autoGrabActive) autoGrabThread.start();
         }
+    }
+
+    public boolean isTapeActive() {
+        return tapeActive;
+    }
+
+    public boolean isIrActive() {
+        return irActive;
+    }
+
+    public boolean isAutoGrabActive() {
+        return autoGrabActive;
     }
 
     public ColorState[] getArray() {
@@ -169,8 +192,12 @@ public class SensorArmy implements Subsystem {
 
     }
 
-    public double getSmoothedAutoGrab(DistanceUnit distanceUnit) {
-        return autograb.estimate(autoGrab.getDistance(distanceUnit));
+    public double getSmoothedAutoGrab() {
+        return autograb.estimate(autoGrab_state.getDistance());
+    }
+
+    public double getAutoGrabDistance() {
+        return autoGrab_state.getDistance();
     }
 
     public double getLeftIR() {

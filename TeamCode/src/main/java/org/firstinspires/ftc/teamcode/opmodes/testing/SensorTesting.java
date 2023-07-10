@@ -3,19 +3,17 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Eyelids;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.SensorArmy;
-import org.firstinspires.ftc.teamcode.opmodes.TeleOpMode;
+import org.firstinspires.ftc.teamcode.OldAssShit.TeleOpModeDEPRICATED;
+import org.firstinspires.ftc.teamcode.opmodes.AutoOpMode;
 
 import java.util.Arrays;
 
 @Config
 @TeleOp(name = "Sensor Testing", group = "!Tuning")
-public class SensorTesting extends TeleOpMode {
+public class SensorTesting extends AutoOpMode {
     SensorArmy sensorArmy;
 
     public static boolean blue = false;
@@ -28,17 +26,24 @@ public class SensorTesting extends TeleOpMode {
 
     @Override
     public void initOpMode() {
-        sensorArmy = new SensorArmy(getHardwareMap());
+        super.initOpMode();
+
+        sensorArmy = robot.sensorArmy;
     }
 
     @Override
+    public void initLoopOpMode() throws InterruptedException {
+        super.initLoopOpMode();
+    }
+
+
+    @Override
     public void updateOpMode() {
-        //m_telemetry.addData("zero", 0); // Don't think i need it
-
-
         if(ir) {
             m_telemetry.addData("Right", sensorArmy.getLeftIR());
             m_telemetry.addData("Left", sensorArmy.getRightIR());
+
+            m_telemetry.addData("get offset", sensorArmy.getDistanceOffset());
         }
 
         if(blue) {

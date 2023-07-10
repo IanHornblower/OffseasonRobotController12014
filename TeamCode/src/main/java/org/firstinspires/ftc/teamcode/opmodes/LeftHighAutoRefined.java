@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.FSM.Auto.OpModes;
-
+package org.firstinspires.ftc.teamcode.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.FSM.Auto.Paths;
+import org.firstinspires.ftc.teamcode.Auto.Paths;
 import org.firstinspires.ftc.teamcode.FSM.FiniteStateMachine;
 import org.firstinspires.ftc.teamcode.FSM.actions.FollowTrajectorySequence;
 import org.firstinspires.ftc.teamcode.FSM.actions.ParkFSM;
@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.FSM.actions.ToConeStack;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.SensorArmy;
 
+@Disabled
 @TeleOp(name = "Left High Auto Refined", group = "!!!!!!")
 public class LeftHighAutoRefined extends LinearOpMode {
     @Override
@@ -22,11 +23,11 @@ public class LeftHighAutoRefined extends LinearOpMode {
 
         Robot robot = new Robot(hardwareMap, telemetry);
 
-        Paths.setDrive(robot.drive);
+        Paths.setDrive(robot);
 
         robot.drive.setPoseEstimate(Paths.NormalHigh.Left.start);
 
-        robot.drive.startIMUThread(this);
+        robot.drive.startIMUThread(this, false);
 
         int cycle = 1;
         boolean parked = false;
@@ -34,7 +35,7 @@ public class LeftHighAutoRefined extends LinearOpMode {
         FollowTrajectorySequence dropPreload = new FollowTrajectorySequence(robot, Paths.NormalHigh.Left.dropPreload);
         FollowTrajectorySequence toConeStack = new FollowTrajectorySequence(robot, Paths.NormalHigh.Left.toConeStackFromPreload, -0.1);
         ToConeStack tapeAlignCone = new ToConeStack(robot, SensorArmy.Color.BLUE, Math.toRadians(180));
-        PickUpCone pickUpCone = new PickUpCone();
+        PickUpCone pickUpCone = null;
         FollowTrajectorySequence toHighPole = new FollowTrajectorySequence(robot, null); // null will be updated later
         ParkFSM park = new ParkFSM(robot, 0, Paths.NormalHigh.Left.getParkPositions());
 
