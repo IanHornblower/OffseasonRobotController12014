@@ -13,8 +13,8 @@ public class RobotConstants {
     public static class Faga {
         @Config
         public static class Articulator {
-            public static double intake = 0.57;
-            public static double outtake = 0.48;
+            public static double intake = 0.50; // was 0.57
+            public static double outtake = 0.41; // was 0.48
             public static double frontLoad = 0.65;
             public static double outtakeAuto = 0.45;
             public static double outtakeSmall = 0.46;
@@ -30,12 +30,15 @@ public class RobotConstants {
         @Config
         public static class Fourbar {
             public static double outtake = 3700;
+            public static double frontLoad = 2000;
+            public static double regularKp = 0.00031;
+            public static double frontloadKp = 0.00045;
 
             public static double tolerance = 100;
             public static double ticksPerRev = 8192;
             public static double max_v = 9000;
             public static double max_a = 8000;
-            public static double kP = 0.00025, kD = 0.0, kCos = 0.12, kI = 0.0, kSin = 0;
+            public static double kP = 0.00031, kD = 0.0, kCos = 0.12, kI = 0.0, kSin = 0;
             public static double kV = 0.00003, kA = 0.000042;
         }
     }

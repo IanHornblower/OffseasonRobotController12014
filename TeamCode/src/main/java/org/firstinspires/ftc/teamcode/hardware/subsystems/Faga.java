@@ -188,7 +188,7 @@ public class Faga {
     }
 
     public void articulateFrontLoad() {
-        setArticulation(frontLoad);
+        setArticulation(RobotConstants.Faga.Articulator.frontLoad);
     }
 
     //Bhaskara I's sine approximation  // goob

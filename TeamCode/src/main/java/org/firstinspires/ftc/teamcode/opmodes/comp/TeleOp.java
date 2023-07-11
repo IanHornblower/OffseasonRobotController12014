@@ -117,11 +117,11 @@ public class TeleOp extends TeleOpMode {
          */
 
 
-        if(gamepad2.square) {
-            robot.faga.setFourbarPosition(0);
-            robot.lift.setTarget(Lift.LIFT.LOW_FRONTLOAD);
-            robot.faga.setArticulation(RobotConstants.Faga.Articulator.frontLoad);
-        }
+        //if(gamepad2.square) {
+        //    robot.faga.setFourbarPosition(0);
+        //    robot.lift.setTarget(Lift.LIFT.LOW_FRONTLOAD);
+        //    robot.faga.setArticulation(RobotConstants.Faga.Articulator.frontLoad);
+        //}
         if(gamepad2.left_trigger > 0.1) {
             robot.faga.clawOpen();
         }
@@ -143,22 +143,55 @@ public class TeleOp extends TeleOpMode {
             toggleDrop = false;
         }
 
-        if(gamepad2.dpad_left) {
+        if(gamepad2.dpad_left && !gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.regularKp;
+            robot.faga.updatePIDF();
+
             robot.lift.setTarget(Lift.LIFT.LOW);
             robot.faga.articulateOuttake();
             robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.outtake);
         }
+        else if(gamepad2.dpad_left && gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.frontloadKp;
+            robot.faga.updatePIDF();
 
-        if(gamepad2.dpad_up) {
+            robot.lift.setTarget(Lift.LIFT.LOW);
+            robot.faga.articulateOuttake();
+            robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.frontloadKp);
+        }
+
+        if(gamepad2.dpad_up && !gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.regularKp;
+            robot.faga.updatePIDF();
+
             robot.lift.setTarget(Lift.LIFT.MID);
             robot.faga.articulateOuttake();
             robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.outtake);
         }
+        else if(gamepad2.dpad_up && gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.frontloadKp;
+            robot.faga.updatePIDF();
 
-        if(gamepad2.dpad_right) {
+            robot.lift.setTarget(Lift.LIFT.MID);
+            robot.faga.articulateOuttake();
+            robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.frontLoad);
+        }
+
+        if(gamepad2.dpad_right && !gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.regularKp;
+            robot.faga.updatePIDF();
+
             robot.lift.setTarget(Lift.LIFT.HIGH);
             robot.faga.articulateOuttake();
             robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.outtake);
+        }
+        else if(gamepad2.dpad_right && gamepad2.square) {
+            RobotConstants.Faga.Fourbar.kP = RobotConstants.Faga.Fourbar.frontloadKp;
+            robot.faga.updatePIDF();
+
+            robot.lift.setTarget(Lift.LIFT.HIGH);
+            robot.faga.articulateOuttake();
+            robot.faga.setFourbarPosition(RobotConstants.Faga.Fourbar.frontLoad);
         }
 
         if(gamepad2.dpad_down) {

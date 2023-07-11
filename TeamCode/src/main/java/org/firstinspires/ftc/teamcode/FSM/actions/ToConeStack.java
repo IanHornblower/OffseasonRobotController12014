@@ -16,12 +16,12 @@ public class ToConeStack extends FiniteStateMachine {
 
     private final PIDController heading = new PIDController(-0.8,0.5,0.0);
     private final PIDController line = new PIDController(-0.045,0.002,0.008);
-    private final SquareRootController wall = new SquareRootController(0.022,0.18,0);
+    private final SquareRootController wall = new SquareRootController(0.028,0.18,0);
 
     private double y_reloc = 0;
     private double x_reloc = 0;
 
-    public static double wallDistance = 1.8; // in IN
+    public static double wallDistance = 1.5; // in IN
 
     public ToConeStack(Robot robot, SensorArmy.Color trackingColor, double targetAngle) {
         this.robot = robot;
@@ -73,7 +73,9 @@ public class ToConeStack extends FiniteStateMachine {
                 //x_reloc = -72 + robot.sensorArmy.getDistanceToWall();
                 x_reloc = -62;
 
-                robot.drive.setPoseEstimate(new Pose2d(x_reloc, y_reloc, robot.drive.getPoseEstimate().getHeading()));
+                robot.drive.getLocalizer().update();
+
+                robot.drive.setPoseEstimate(new Pose2d(x_reloc, y_reloc, robot.drive.getLocalizer().getPoseEstimate().getHeading()));
 
                 nextState();
                 break;
